@@ -11,12 +11,6 @@ Paper status: This work is under review for IEEE ICFEC 2026.
 
 All rights reserved until publication; we will update the license after the paper is accepted.
 
-## Contact
-
-For collaboration, contact:
-[redacted-email]
-[redacted-email]
-[redacted-email]
 
 ## Layout
 
