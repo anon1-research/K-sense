@@ -17,7 +17,7 @@ spec:
       hostPID: true
       containers:
         - name: ksense
-          image: anon1-research/ksense:latest
+          image: ksense:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             privileged: true

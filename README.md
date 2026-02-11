@@ -18,11 +18,11 @@ All rights reserved until publication; we will update the license after the pape
 - `main.py` Entry point script
 - `scripts/monitor_cpu_psi.py` CPU + PSI monitoring helper script (CSV only, no plotting)
 - `scripts/step_response_prober.py` Step-response load generator for 3 apps (per-second CSV). Uses DeathStarBench and a sentiment-analysis app:
-  - https://github.com/anon1-research/DeathStarBench
-  - https://github.com/anon1-research/CustomerFeedback
+  - https://github.com/delimitrou/DeathStarBench
+  - sentiment-analysis app (not included in this repo)
 - `scripts/latency_p99_prober.py` Parallel P99 latency prober for 3 apps (per-interval CSV). Uses the same app sources:
-  - https://github.com/anon1-research/DeathStarBench
-  - https://github.com/anon1-research/CustomerFeedback
+  - https://github.com/delimitrou/DeathStarBench
+  - sentiment-analysis app (not included in this repo)
 - `kubernetes/` Kubernetes manifests (namespace, DaemonSet, kustomization)
 - `node_collector/` Node-level syscall + kernel signal collector (eBPF) used to
   compute correlations and select which kernel syscalls/tracepoints best track latency
