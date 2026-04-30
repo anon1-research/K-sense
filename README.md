@@ -7,10 +7,6 @@ and an adaptive energy signal.
 
 Paper status: This work is under review for IEEE ICFEC 2026.
 
-## License
-
-All rights reserved until publication; we will update the license after the paper is accepted.
-
 
 ## Layout
 
