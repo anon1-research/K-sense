@@ -7,6 +7,7 @@
 #   2) CLI flags: --no-social / --no-hotel / --no-feedback
 #
 
+import os
 import time
 import random
 import string
@@ -20,20 +21,27 @@ import requests
 import numpy as np
 
 # ---------------- CONFIG ----------------
-HOSTNODE_IP = "172.22.174.42"
+HOSTNODE_IP = os.environ.get("KSENSE_HOST", "127.0.0.1")
 
 # App 1: Social Media
 SOCIAL_PORT = 30080
 SOCIAL_ENDPOINT = "/wrk2-api/post/compose"
-SOCIAL_URL = f"http://{HOSTNODE_IP}:{SOCIAL_PORT}{SOCIAL_ENDPOINT}"
 
 # App 2: Hotel Reservation (mixed workload)
 HOTEL_PORT = 32192
-HOTEL_BASE = f"http://{HOSTNODE_IP}:{HOTEL_PORT}"
 
-# App 3: CustomerFeedback
-FEEDBACK_URL = f"http://{HOSTNODE_IP}:32001/feedback/analyse"
-FEEDBACK_INPUT_FILE = "/home/user/Desktop/CustomerFeedback/file_processing/feedback_input_text_unique_variations.json"
+# App 3: CustomerFeedback (port 32001)
+FEEDBACK_INPUT_FILE = os.environ.get("KSENSE_FEEDBACK_INPUT", "")
+
+
+def _build_urls(host: str):
+    global SOCIAL_URL, HOTEL_BASE, FEEDBACK_URL
+    SOCIAL_URL = f"http://{host}:{SOCIAL_PORT}{SOCIAL_ENDPOINT}"
+    HOTEL_BASE = f"http://{host}:{HOTEL_PORT}"
+    FEEDBACK_URL = f"http://{host}:32001/feedback/analyse"
+
+
+_build_urls(HOSTNODE_IP)
 
 # Sampling
 INTERVAL_SEC = 1.0
@@ -231,6 +239,10 @@ def csv_cell(enabled: bool, value: Optional[float]) -> str:
 # ---------------- MAIN ----------------
 def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser(description="3-app concurrent-burst P99 prober with per-app toggles.")
+    ap.add_argument("--host", default=HOSTNODE_IP,
+                    help="Host IP or hostname of the target node (env: KSENSE_HOST, default: 127.0.0.1)")
+    ap.add_argument("--feedback-input", default=FEEDBACK_INPUT_FILE,
+                    help="Path to feedback JSON input file (env: KSENSE_FEEDBACK_INPUT)")
     ap.add_argument("--no-social", action="store_true", help="Disable Social app probing")
     ap.add_argument("--no-hotel", action="store_true", help="Disable Hotel app probing")
     ap.add_argument("--no-feedback", action="store_true", help="Disable Feedback app probing")
@@ -243,9 +255,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def main():
-    global INTERVAL_SEC, BURST_SIZE, REQUEST_TIMEOUT_SEC, OUTPUT_FILE, MAX_WORKERS_PER_APP
+    global INTERVAL_SEC, BURST_SIZE, REQUEST_TIMEOUT_SEC, OUTPUT_FILE, MAX_WORKERS_PER_APP, FEEDBACK_INPUT_FILE
 
     args = parse_args()
+
+    FEEDBACK_INPUT_FILE = args.feedback_input
+    _build_urls(args.host)
 
     # Apply runtime overrides
     INTERVAL_SEC = float(args.interval)

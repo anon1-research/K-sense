@@ -5,7 +5,7 @@ eBPF-based framework that infers QoS degradation from kernel behavior by computi
 a covariance-aware friction signal (Mahalanobis distance) plus a directional sign
 and an adaptive energy signal.
 
-Paper status: This work is under review for IEEE ICFEC 2026.
+Paper status: Accepted at IEEE ICFEC 2026.
 
 
 ## Layout
@@ -65,7 +65,16 @@ docker run --rm --privileged \
 
 ## Kubernetes
 
-The DaemonSet runs one pod per node. Apply the namespace and DaemonSet with kustomize:
+The DaemonSet runs one pod per node.
+
+**Build and push the image first** (replace `<registry>` with your registry, e.g. `docker.io/myuser`):
+
+```bash
+docker build -t <registry>/ksense:latest .
+docker push <registry>/ksense:latest
+```
+
+Then update the image reference in [kubernetes/daemonset.yaml](kubernetes/daemonset.yaml) to match, and apply:
 
 ```bash
 kubectl apply -k kubernetes/
@@ -97,7 +106,28 @@ P99 latency under changing load and remains informative when CPU utilization and
 PSI saturate, enabling non-invasive QoS inference for admission control and
 scheduling decisions.
 
+## Citation
+
+If you use K-Sense in your research, please cite our paper:
+
+```bibtex
+@inproceedings{ksense2026,
+  author    = {Abdullah Muslim and Ali Beiti Aydenlou and Stephan Recker},
+  title     = {K-Sense: A Non-Invasive eBPF Framework for QoS Inference},
+  booktitle = {Proceedings of the IEEE International Conference on Fog and Edge Computing (ICFEC)},
+  year      = {2026},
+}
+```
+
+## Example Output
+
+A sample [kernel_metrics_sample.csv](examples/kernel_metrics_sample.csv) is provided in `examples/`.
+It shows the calibration phase (`CALIBRATING`), baseline freeze (`FROZEN`), and friction/energy
+signals rising and falling in response to a load step.
+
 ## Notes
 
-- Requires `bcc` and `numpy`.
+- `bcc` must be installed via the system package manager, not pip:
+  `sudo apt-get install bpfcc-tools python3-bpfcc`
+- Requires `numpy>=1.21` and `requests>=2.25` (`pip install -r requirements.txt`).
 - Run with appropriate privileges for eBPF (typically `sudo`).

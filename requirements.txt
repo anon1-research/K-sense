@@ -1,3 +1,4 @@
-bcc
-numpy
-requests
+# bcc must be installed via the system package manager, not pip.
+# Ubuntu/Debian: sudo apt-get install bpfcc-tools python3-bpfcc
+numpy>=1.21
+requests>=2.25
