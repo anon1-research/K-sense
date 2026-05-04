@@ -83,7 +83,17 @@ Both prober scripts also respect the `KSENSE_HOST` and `KSENSE_FEEDBACK_INPUT` e
 
 ## Docker
 
-K-Sense requires privileged access for eBPF:
+A pre-built image is published to GitHub Container Registry on each release:
+
+```bash
+docker pull ghcr.io/abmuslim/k-sense:latest
+docker run --rm --privileged \
+  -v /sys/kernel/debug:/sys/kernel/debug \
+  -v /lib/modules:/lib/modules:ro \
+  ghcr.io/abmuslim/k-sense:latest
+```
+
+Or build locally (eBPF requires `--privileged`):
 
 ```bash
 docker build -t ksense .
